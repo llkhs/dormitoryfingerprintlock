@@ -1,0 +1,658 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        04/24/2021  22:29:49  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+D:\\C51\BIN\BL51.EXE STARTUP.obj, main.obj TO fingerprintlock
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  STARTUP.obj (?C_STARTUP)
+  main.obj (MAIN)
+  D:\\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  fingerprintlock (?C_STARTUP)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     002BH     UNIT         ?DT?MAIN
+            DATA    0033H     0001H     UNIT         _DATA_GROUP_
+            IDATA   0034H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0003H     ABSOLUTE     
+                    0006H     0005H                  *** GAP ***
+            CODE    000BH     0003H     ABSOLUTE     
+                    000EH     07F2H                  *** GAP ***
+            CODE    0800H     0106H     UNIT         ?PR?READIR?MAIN
+            CODE    0906H     008CH     UNIT         ?C_C51STARTUP
+            CODE    0992H     0063H     UNIT         ?PR?MAIN?MAIN
+            CODE    09F5H     003AH     UNIT         ?PR?FPM10A_FIND_FINGERPRINT?MAIN
+            CODE    0A2FH     002CH     UNIT         ?PR?TIME0_INIT?MAIN
+            CODE    0A5BH     002BH     UNIT         ?PR?_DELAY1MS?MAIN
+            CODE    0A86H     001FH     UNIT         ?PR?FPM10A_CMD_SEND_PACK_HEAD?MAIN
+            CODE    0AA5H     001EH     UNIT         ?CO?MAIN
+            CODE    0AC3H     0016H     UNIT         ?PR?_FPM10A_RECEIVE_DATA?MAIN
+            CODE    0AD9H     0014H     UNIT         ?PR?UART_INIT?MAIN
+            CODE    0AEDH     0013H     UNIT         ?PR?TIMER0_INIT?MAIN
+            CODE    0B00H     0013H     UNIT         ?PR?FPM10A_CMD_SEARCH_FINGER?MAIN
+            CODE    0B13H     0010H     UNIT         ?PR?FPM10A_CMD_GET_IMG?MAIN
+            CODE    0B23H     0010H     UNIT         ?PR?FINGERPRINT_CMD_IMG_TO_BUFFER1?MAIN
+            CODE    0B33H     000FH     UNIT         ?PR?_DELAY_IR?MAIN
+            CODE    0B42H     000EH     UNIT         ?PR?DELAY1S?MAIN
+            CODE    0B50H     000EH     UNIT         ?PR?DELAY500MS?MAIN
+            CODE    0B5EH     000EH     UNIT         ?PR?DELAY1_6_F?MAIN
+            CODE    0B6CH     000DH     UNIT         ?PR?DELAY10MS?MAIN
+            CODE    0B79H     000BH     UNIT         ?PR?_UART_SEND_BYTE?MAIN
+            CODE    0B84H     0009H     UNIT         ?PR?DELAY100MS?MAIN
+            CODE    0B8DH     0009H     UNIT         ?PR?DELAY50MS?MAIN
+            CODE    0B96H     0009H     UNIT         ?PR?IRINIT?MAIN
+            CODE    0B9FH     0008H     UNIT         ?PR?UART_RECEIVE_BYTE?MAIN
+            CODE    0BA7H     0004H     UNIT         ?C_INITSEG
+
+
+BL51 BANKED LINKER/LOCATER V6.22                                                      04/24/2021  22:29:49  PAGE 2
+
+
+
+OVERLAY MAP OF MODULE:   fingerprintlock (?C_STARTUP)
+
+
+SEGMENT                                           DATA_GROUP 
+  +--> CALLED SEGMENT                           START    LENGTH
+---------------------------------------------------------------
+?C_C51STARTUP                                   -----    -----
+  +--> ?PR?MAIN?MAIN
+  +--> ?C_INITSEG
+
+?PR?MAIN?MAIN                                   -----    -----
+  +--> ?PR?DELAY500MS?MAIN
+  +--> ?PR?UART_INIT?MAIN
+  +--> ?PR?TIMER0_INIT?MAIN
+  +--> ?PR?IRINIT?MAIN
+  +--> ?PR?FPM10A_FIND_FINGERPRINT?MAIN
+  +--> ?PR?_DELAY1MS?MAIN
+  +--> ?PR?DELAY100MS?MAIN
+
+?PR?FPM10A_FIND_FINGERPRINT?MAIN                -----    -----
+  +--> ?PR?FPM10A_CMD_GET_IMG?MAIN
+  +--> ?PR?_FPM10A_RECEIVE_DATA?MAIN
+  +--> ?PR?DELAY100MS?MAIN
+  +--> ?PR?FINGERPRINT_CMD_IMG_TO_BUFFER1?MAIN
+  +--> ?PR?FPM10A_CMD_SEARCH_FINGER?MAIN
+  +--> ?PR?_DELAY1MS?MAIN
+  +--> ?PR?DELAY1S?MAIN
+
+?PR?FPM10A_CMD_GET_IMG?MAIN                     -----    -----
+  +--> ?PR?FPM10A_CMD_SEND_PACK_HEAD?MAIN
+  +--> ?CO?MAIN
+  +--> ?PR?_UART_SEND_BYTE?MAIN
+
+?PR?FPM10A_CMD_SEND_PACK_HEAD?MAIN              -----    -----
+  +--> ?CO?MAIN
+  +--> ?PR?_UART_SEND_BYTE?MAIN
+
+?PR?_FPM10A_RECEIVE_DATA?MAIN                   -----    -----
+  +--> ?PR?UART_RECEIVE_BYTE?MAIN
+
+?PR?FINGERPRINT_CMD_IMG_TO_BUFFER1?MAIN         -----    -----
+  +--> ?PR?FPM10A_CMD_SEND_PACK_HEAD?MAIN
+  +--> ?CO?MAIN
+  +--> ?PR?_UART_SEND_BYTE?MAIN
+
+?PR?FPM10A_CMD_SEARCH_FINGER?MAIN               -----    -----
+  +--> ?PR?FPM10A_CMD_SEND_PACK_HEAD?MAIN
+  +--> ?CO?MAIN
+  +--> ?PR?_UART_SEND_BYTE?MAIN
+
+*** NEW ROOT ***************************************************
+
+?PR?READIR?MAIN                                 0033H    0001H
+  +--> ?PR?_DELAY_IR?MAIN
+  +--> ?PR?DELAY500MS?MAIN
+
+BL51 BANKED LINKER/LOCATER V6.22                                                      04/24/2021  22:29:49  PAGE 3
+
+
+
+
+SYMBOL TABLE OF MODULE:  fingerprintlock (?C_STARTUP)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ?C_STARTUP
+  C:0906H         SEGMENT       ?C_C51STARTUP
+  I:0034H         SEGMENT       ?STACK
+  C:0000H         PUBLIC        ?C_STARTUP
+  D:00E0H         SYMBOL        ACC
+  D:00F0H         SYMBOL        B
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  N:0000H         SYMBOL        IBPSTACK
+  N:0100H         SYMBOL        IBPSTACKTOP
+  N:0080H         SYMBOL        IDATALEN
+  C:0909H         SYMBOL        IDATALOOP
+  N:0000H         SYMBOL        PBPSTACK
+  N:0100H         SYMBOL        PBPSTACKTOP
+  N:0000H         SYMBOL        PDATALEN
+  N:0000H         SYMBOL        PDATASTART
+  N:0000H         SYMBOL        PPAGE
+  N:0000H         SYMBOL        PPAGEENABLE
+  D:00A0H         SYMBOL        PPAGE_SFR
+  D:0081H         SYMBOL        SP
+  C:0906H         SYMBOL        STARTUP1
+  N:0000H         SYMBOL        XBPSTACK
+  N:0000H         SYMBOL        XBPSTACKTOP
+  N:0000H         SYMBOL        XDATALEN
+  N:0000H         SYMBOL        XDATASTART
+  C:0000H         LINE#         126
+  C:0906H         LINE#         133
+  C:0908H         LINE#         134
+  C:0909H         LINE#         135
+  C:090AH         LINE#         136
+  C:090CH         LINE#         185
+  C:090FH         LINE#         196
+  -------         ENDMOD        ?C_STARTUP
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  C:0B7CH         PUBLIC        _Uart_Send_Byte
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  C:0B84H         PUBLIC        delay100ms
+  B:00A8H.7       PUBLIC        EA
+  C:0AABH         PUBLIC        FPM10A_Get_Img
+  C:0B50H         PUBLIC        delay500ms
+  C:0AC3H         PUBLIC        _FPM10A_Receive_Data
+  D:00A8H         PUBLIC        IE
+  D:0008H         PUBLIC        Time
+  B:00A0H.3       PUBLIC        Irfet_led
+  C:0AD9H         PUBLIC        Uart_Init
+  D:00B8H         PUBLIC        IP
+BL51 BANKED LINKER/LOCATER V6.22                                                      04/24/2021  22:29:49  PAGE 4
+
+
+  C:0AB1H         PUBLIC        FPM10A_Img_To_Buffer1
+  B:0098H.0       PUBLIC        RI
+  B:0098H.1       PUBLIC        TI
+  C:0A86H         PUBLIC        FPM10A_Cmd_Send_Pack_Head
+  C:0B5EH         PUBLIC        delay1_6_f
+  B:00A0H.0       PUBLIC        chen
+  C:0A66H         PUBLIC        _delay1ms
+  C:0992H         PUBLIC        main
+  C:0AEDH         PUBLIC        Timer0_Init
+  D:0009H         PUBLIC        count
+  C:0B37H         PUBLIC        _delay_Ir
+  D:0099H         PUBLIC        SBUF
+  D:0087H         PUBLIC        PCON
+  B:00B0H.2       PUBLIC        IRIN
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  D:0088H         PUBLIC        TCON
+  B:00A0H.5       PUBLIC        led
+  C:0B42H         PUBLIC        delay1s
+  C:0A2FH         PUBLIC        Time0_Init
+  C:0800H         PUBLIC        ReadIr
+  D:000AH         PUBLIC        IrValue
+  C:0B9FH         PUBLIC        Uart_Receive_Byte
+  C:0AA5H         PUBLIC        FPM10A_Pack_Head
+  C:0AB8H         PUBLIC        FPM10A_Search
+  B:00A0H.1       PUBLIC        shi
+  B:00A8H.1       PUBLIC        ET0
+  D:008CH         PUBLIC        TH0
+  B:00A8H.0       PUBLIC        EX0
+  B:0088H.0       PUBLIC        IT0
+  D:008DH         PUBLIC        TH1
+  D:008AH         PUBLIC        TL0
+  D:008BH         PUBLIC        TL1
+  C:0B96H         PUBLIC        IrInit
+  C:0B6CH         PUBLIC        delay10ms
+  D:0010H         PUBLIC        timer1
+  C:0B23H         PUBLIC        FINGERPRINT_Cmd_Img_To_Buffer1
+  B:0088H.4       PUBLIC        TR0
+  B:0088H.6       PUBLIC        TR1
+  C:0B8DH         PUBLIC        delay50ms
+  B:0090H.1       PUBLIC        GND
+  C:09F5H         PUBLIC        FPM10A_Find_Fingerprint
+  D:00C8H         PUBLIC        T2CON
+  B:00A0H.7       PUBLIC        PWM
+  C:0B00H         PUBLIC        FPM10A_Cmd_Search_Finger
+  D:0011H         PUBLIC        FPM10A_RECEICE_BUFFER
+  B:00A0H.6       PUBLIC        pressed
+  D:00D0H         PUBLIC        PSW
+  D:0031H         PUBLIC        Irfet
+  C:0B13H         PUBLIC        FPM10A_Cmd_Get_Img
+  -------         PROC          DELAY1S
+  -------         DO            
+  D:0005H         SYMBOL        a
+  D:0006H         SYMBOL        b
+  D:0007H         SYMBOL        c
+  -------         ENDDO         
+  C:0B42H         LINE#         35
+BL51 BANKED LINKER/LOCATER V6.22                                                      04/24/2021  22:29:49  PAGE 5
+
+
+  C:0B42H         LINE#         36
+  C:0B42H         LINE#         38
+  C:0B44H         LINE#         39
+  C:0B46H         LINE#         40
+  C:0B4EH         LINE#         41
+  C:0B4FH         LINE#         42
+  -------         ENDPROC       DELAY1S
+  -------         PROC          DELAY100MS
+  -------         DO            
+  D:0006H         SYMBOL        a
+  D:0007H         SYMBOL        b
+  -------         ENDDO         
+  C:0B84H         LINE#         44
+  C:0B84H         LINE#         45
+  C:0B84H         LINE#         47
+  C:0B86H         LINE#         48
+  C:0B8CH         LINE#         49
+  -------         ENDPROC       DELAY100MS
+  -------         PROC          DELAY500MS
+  -------         DO            
+  D:0005H         SYMBOL        a
+  D:0006H         SYMBOL        b
+  D:0007H         SYMBOL        c
+  -------         ENDDO         
+  C:0B50H         LINE#         52
+  C:0B50H         LINE#         53
+  C:0B50H         LINE#         55
+  C:0B52H         LINE#         56
+  C:0B54H         LINE#         57
+  C:0B5CH         LINE#         58
+  C:0B5DH         LINE#         59
+  -------         ENDPROC       DELAY500MS
+  -------         PROC          DELAY1_6_F
+  -------         DO            
+  D:0005H         SYMBOL        a
+  D:0006H         SYMBOL        b
+  D:0007H         SYMBOL        c
+  -------         ENDDO         
+  C:0B5EH         LINE#         61
+  C:0B5EH         LINE#         62
+  C:0B5EH         LINE#         64
+  C:0B60H         LINE#         65
+  C:0B62H         LINE#         66
+  C:0B6AH         LINE#         67
+  C:0B6BH         LINE#         68
+  -------         ENDPROC       DELAY1_6_F
+  -------         PROC          DELAY50MS
+  -------         DO            
+  D:0006H         SYMBOL        a
+  D:0007H         SYMBOL        b
+  -------         ENDDO         
+  C:0B8DH         LINE#         70
+  C:0B8DH         LINE#         71
+  C:0B8DH         LINE#         73
+  C:0B8FH         LINE#         74
+  C:0B95H         LINE#         75
+  -------         ENDPROC       DELAY50MS
+BL51 BANKED LINKER/LOCATER V6.22                                                      04/24/2021  22:29:49  PAGE 6
+
+
+  -------         PROC          DELAY10MS
+  -------         DO            
+  D:0005H         SYMBOL        a
+  D:0006H         SYMBOL        b
+  D:0007H         SYMBOL        c
+  -------         ENDDO         
+  C:0B6CH         LINE#         77
+  C:0B6CH         LINE#         78
+  C:0B6CH         LINE#         80
+  C:0B6EH         LINE#         81
+  C:0B70H         LINE#         82
+  C:0B78H         LINE#         83
+  -------         ENDPROC       DELAY10MS
+  -------         PROC          L?0138
+  -------         ENDPROC       L?0138
+  -------         PROC          _DELAY1MS
+  D:0006H         SYMBOL        i
+  -------         DO            
+  D:0004H         SYMBOL        k
+  D:0002H         SYMBOL        j
+  -------         ENDDO         
+  C:0A66H         LINE#         85
+  C:0A66H         LINE#         86
+  C:0A66H         LINE#         88
+  C:0A70H         LINE#         89
+  C:0A85H         LINE#         90
+  -------         ENDPROC       _DELAY1MS
+  C:0B33H         SYMBOL        L?0140
+  -------         PROC          L?0139
+  -------         ENDPROC       L?0139
+  C:0B33H         SYMBOL        L?0140
+  -------         PROC          _DELAY_IR
+  D:0006H         SYMBOL        i
+  C:0B37H         LINE#         93
+  C:0B37H         LINE#         94
+  C:0B37H         LINE#         95
+  C:0B41H         LINE#         96
+  -------         ENDPROC       _DELAY_IR
+  -------         PROC          TIMER0_INIT
+  C:0AEDH         LINE#         102
+  C:0AEDH         LINE#         103
+  C:0AEDH         LINE#         104
+  C:0AF0H         LINE#         105
+  C:0AF3H         LINE#         107
+  C:0AF6H         LINE#         108
+  C:0AF9H         LINE#         110
+  C:0AFBH         LINE#         111
+  C:0AFDH         LINE#         112
+  C:0AFFH         LINE#         113
+  -------         ENDPROC       TIMER0_INIT
+  -------         PROC          TIME0_INIT
+  C:0A2FH         LINE#         116
+  C:0A33H         LINE#         118
+  C:0A35H         LINE#         119
+  C:0A38H         LINE#         120
+  C:0A3BH         LINE#         122
+  C:0A42H         LINE#         123
+BL51 BANKED LINKER/LOCATER V6.22                                                      04/24/2021  22:29:49  PAGE 7
+
+
+  C:0A42H         LINE#         124
+  C:0A44H         LINE#         125
+  C:0A46H         LINE#         127
+  C:0A46H         LINE#         128
+  C:0A48H         LINE#         129
+  C:0A48H         LINE#         130
+  C:0A4AH         LINE#         131
+  C:0A51H         LINE#         132
+  C:0A51H         LINE#         133
+  C:0A54H         LINE#         134
+  C:0A54H         LINE#         135
+  C:0A56H         LINE#         136
+  -------         ENDPROC       TIME0_INIT
+  -------         PROC          UART_INIT
+  C:0AD9H         LINE#         140
+  C:0AD9H         LINE#         141
+  C:0AD9H         LINE#         142
+  C:0ADCH         LINE#         143
+  C:0ADFH         LINE#         144
+  C:0AE2H         LINE#         145
+  C:0AE5H         LINE#         146
+  C:0AE8H         LINE#         147
+  C:0AEAH         LINE#         148
+  C:0AECH         LINE#         149
+  -------         ENDPROC       UART_INIT
+  -------         PROC          IRINIT
+  C:0B96H         LINE#         153
+  C:0B96H         LINE#         154
+  C:0B96H         LINE#         155
+  C:0B98H         LINE#         156
+  C:0B9AH         LINE#         157
+  C:0B9CH         LINE#         158
+  C:0B9EH         LINE#         159
+  -------         ENDPROC       IRINIT
+  -------         PROC          L?0141
+  -------         ENDPROC       L?0141
+  -------         PROC          _UART_SEND_BYTE
+  D:0007H         SYMBOL        c
+  C:0B7CH         LINE#         165
+  C:0B7CH         LINE#         166
+  C:0B7CH         LINE#         167
+  C:0B7EH         LINE#         168
+  C:0B81H         LINE#         169
+  C:0B83H         LINE#         170
+  -------         ENDPROC       _UART_SEND_BYTE
+  -------         PROC          UART_RECEIVE_BYTE
+  -------         DO            
+  D:0007H         SYMBOL        dat
+  -------         ENDDO         
+  C:0B9FH         LINE#         172
+  C:0B9FH         LINE#         173
+  C:0B9FH         LINE#         175
+  C:0BA2H         LINE#         176
+  C:0BA4H         LINE#         177
+  C:0BA6H         LINE#         178
+  C:0BA6H         LINE#         179
+  -------         ENDPROC       UART_RECEIVE_BYTE
+BL51 BANKED LINKER/LOCATER V6.22                                                      04/24/2021  22:29:49  PAGE 8
+
+
+  -------         PROC          FPM10A_CMD_SEND_PACK_HEAD
+  -------         DO            
+  D:0004H         SYMBOL        i
+  -------         ENDDO         
+  C:0A86H         LINE#         187
+  C:0A86H         LINE#         188
+  C:0A86H         LINE#         190
+  C:0A89H         LINE#         191
+  C:0A89H         LINE#         192
+  C:0A99H         LINE#         193
+  C:0AA4H         LINE#         194
+  -------         ENDPROC       FPM10A_CMD_SEND_PACK_HEAD
+  -------         PROC          _FPM10A_RECEIVE_DATA
+  D:0006H         SYMBOL        ucLength
+  -------         DO            
+  D:0005H         SYMBOL        i
+  -------         ENDDO         
+  C:0AC3H         LINE#         196
+  C:0AC5H         LINE#         197
+  C:0AC5H         LINE#         200
+  C:0ACCH         LINE#         201
+  C:0AD8H         LINE#         203
+  -------         ENDPROC       _FPM10A_RECEIVE_DATA
+  -------         PROC          FPM10A_CMD_GET_IMG
+  -------         DO            
+  D:0006H         SYMBOL        i
+  -------         ENDDO         
+  C:0B13H         LINE#         205
+  C:0B13H         LINE#         206
+  C:0B13H         LINE#         208
+  C:0B16H         LINE#         209
+  C:0B18H         LINE#         210
+  C:0B18H         LINE#         211
+  C:0B1EH         LINE#         212
+  C:0B22H         LINE#         213
+  -------         ENDPROC       FPM10A_CMD_GET_IMG
+  -------         PROC          FINGERPRINT_CMD_IMG_TO_BUFFER1
+  -------         DO            
+  D:0006H         SYMBOL        i
+  -------         ENDDO         
+  C:0B23H         LINE#         215
+  C:0B23H         LINE#         216
+  C:0B23H         LINE#         218
+  C:0B26H         LINE#         219
+  C:0B28H         LINE#         220
+  C:0B28H         LINE#         221
+  C:0B2EH         LINE#         222
+  C:0B32H         LINE#         223
+  -------         ENDPROC       FINGERPRINT_CMD_IMG_TO_BUFFER1
+  -------         PROC          FPM10A_CMD_SEARCH_FINGER
+  -------         DO            
+  D:0006H         SYMBOL        i
+  -------         ENDDO         
+  C:0B00H         LINE#         226
+  C:0B00H         LINE#         227
+  C:0B00H         LINE#         229
+  C:0B03H         LINE#         230
+BL51 BANKED LINKER/LOCATER V6.22                                                      04/24/2021  22:29:49  PAGE 9
+
+
+  C:0B05H         LINE#         231
+  C:0B05H         LINE#         232
+  C:0B0EH         LINE#         233
+  C:0B12H         LINE#         234
+  -------         ENDPROC       FPM10A_CMD_SEARCH_FINGER
+  -------         PROC          FPM10A_FIND_FINGERPRINT
+  C:09F5H         LINE#         237
+  C:09F5H         LINE#         238
+  C:09F5H         LINE#         239
+  C:09F8H         LINE#         240
+  C:09FDH         LINE#         241
+  C:0A01H         LINE#         242
+  C:0A01H         LINE#         243
+  C:0A04H         LINE#         244
+  C:0A07H         LINE#         245
+  C:0A0CH         LINE#         246
+  C:0A0FH         LINE#         247
+  C:0A14H         LINE#         248
+  C:0A18H         LINE#         249
+  C:0A18H         LINE#         250
+  C:0A18H         LINE#         251
+  C:0A18H         LINE#         252
+  C:0A18H         LINE#         253
+  C:0A1BH         LINE#         254
+  C:0A1EH         LINE#         255
+  C:0A21H         LINE#         256
+  C:0A23H         LINE#         257
+  C:0A24H         LINE#         259
+  C:0A24H         LINE#         260
+  C:0A26H         LINE#         261
+  C:0A29H         LINE#         262
+  C:0A2BH         LINE#         263
+  C:0A2EH         LINE#         264
+  C:0A2EH         LINE#         265
+  C:0A2EH         LINE#         266
+  -------         ENDPROC       FPM10A_FIND_FINGERPRINT
+  -------         PROC          READIR
+  -------         DO            
+  D:0033H         SYMBOL        j
+  D:0005H         SYMBOL        k
+  D:0002H         SYMBOL        err
+  -------         ENDDO         
+  C:0800H         LINE#         270
+  C:0815H         LINE#         274
+  C:0818H         LINE#         275
+  C:081BH         LINE#         276
+  C:081EH         LINE#         277
+  C:0825H         LINE#         278
+  C:082BH         LINE#         279
+  C:082BH         LINE#         280
+  C:082FH         LINE#         283
+  C:083BH         LINE#         284
+  C:083BH         LINE#         285
+  C:083EH         LINE#         286
+  C:0843H         LINE#         287
+  C:0845H         LINE#         288
+  C:084BH         LINE#         289
+BL51 BANKED LINKER/LOCATER V6.22                                                      04/24/2021  22:29:49  PAGE 10
+
+
+  C:084BH         LINE#         290
+  C:084FH         LINE#         291
+  C:085BH         LINE#         292
+  C:085BH         LINE#         293
+  C:085EH         LINE#         294
+  C:0863H         LINE#         295
+  C:0865H         LINE#         296
+  C:0867H         LINE#         297
+  C:0867H         LINE#         298
+  C:086AH         LINE#         299
+  C:086AH         LINE#         300
+  C:086EH         LINE#         301
+  C:087AH         LINE#         302
+  C:087AH         LINE#         303
+  C:087DH         LINE#         304
+  C:0882H         LINE#         305
+  C:0884H         LINE#         306
+  C:0888H         LINE#         307
+  C:0894H         LINE#         308
+  C:0894H         LINE#         309
+  C:089BH         LINE#         310
+  C:089DH         LINE#         311
+  C:08A2H         LINE#         312
+  C:08A9H         LINE#         313
+  C:08ABH         LINE#         315
+  C:08ABH         LINE#         317
+  C:08B8H         LINE#         318
+  C:08BFH         LINE#         319
+  C:08BFH         LINE#         320
+  C:08C7H         LINE#         321
+  C:08C7H         LINE#         322
+  C:08CAH         LINE#         323
+  C:08D3H         LINE#         324
+  C:08D9H         LINE#         325
+  C:08D9H         LINE#         327
+  C:08E0H         LINE#         328
+  C:08E2H         LINE#         330
+  C:08E2H         LINE#         331
+  C:08E2H         LINE#         332
+  C:08E8H         LINE#         333
+  C:08EAH         LINE#         334
+  C:08EDH         LINE#         336
+  C:08F0H         LINE#         337
+  C:08F3H         LINE#         338
+  C:08F3H         LINE#         339
+  C:08F3H         LINE#         340
+  -------         ENDPROC       READIR
+  -------         PROC          MAIN
+  C:0992H         LINE#         347
+  C:0992H         LINE#         348
+  C:0992H         LINE#         349
+  C:0995H         LINE#         350
+  C:0998H         LINE#         351
+  C:099BH         LINE#         352
+  C:099EH         LINE#         353
+  C:09A0H         LINE#         354
+  C:09A2H         LINE#         355
+BL51 BANKED LINKER/LOCATER V6.22                                                      04/24/2021  22:29:49  PAGE 11
+
+
+  C:09A4H         LINE#         356
+  C:09A6H         LINE#         357
+  C:09A8H         LINE#         358
+  C:09ABH         LINE#         359
+  C:09AEH         LINE#         360
+  C:09B0H         LINE#         361
+  C:09B2H         LINE#         362
+  C:09B6H         LINE#         363
+  C:09B8H         LINE#         365
+  C:09B8H         LINE#         366
+  C:09B8H         LINE#         367
+  C:09BBH         LINE#         368
+  C:09BBH         LINE#         369
+  C:09BEH         LINE#         370
+  C:09C1H         LINE#         371
+  C:09C4H         LINE#         372
+  C:09C7H         LINE#         373
+  C:09CAH         LINE#         374
+  C:09CDH         LINE#         375
+  C:09D0H         LINE#         376
+  C:09D3H         LINE#         377
+  C:09D5H         LINE#         379
+  C:09DDH         LINE#         380
+  C:09E1H         LINE#         381
+  C:09E1H         LINE#         382
+  C:09E1H         LINE#         383
+  C:09E1H         LINE#         384
+  C:09E4H         LINE#         385
+  C:09E7H         LINE#         386
+  C:09EAH         LINE#         387
+  C:09ECH         LINE#         388
+  C:09EEH         LINE#         389
+  C:09F0H         LINE#         390
+  C:09F0H         LINE#         391
+  C:09F3H         LINE#         392
+  C:09F3H         LINE#         393
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?DELAY1_6_F?MAIN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?DELAY50MS?MAIN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?DELAY10MS?MAIN
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0333H BYTE (39%) *
+******************************************************************************
+
+Program Size: data=53.0 xdata=0 code=948
+LINK/LOCATE RUN COMPLETE.  3 WARNING(S),  0 ERROR(S)

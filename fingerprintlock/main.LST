@@ -1,0 +1,431 @@
+C51 COMPILER V9.01   MAIN                                                                  04/24/2021 22:29:49 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: D:\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include<reg52.h>
+   2          #include<intrins.h>
+   3          
+   4          sbit chen=P2^0;    //Ö¸ÎÆ³É¹¦µÆ
+   5          sbit shi=P2^1;     //Ö¸ÎÆÊ§°ÜµÆ
+   6          sbit Irfet_led=P2^3;    //ºìÍâÖ¸Ê¾µÆ
+   7          sbit led=P2^5;     //³õÊ¼»¯µÆ
+   8          sbit pressed=P2^6;  //¸ÐÓ¦¼ì²â
+   9          sbit PWM = P2^7;  //Éè¶¨PWMÊä³öµÄI/O¶Ë¿Ú
+  10          sbit K1=P3^1; 
+  11          sbit GND=P1^1;     //¶æ»ú½ÓµØ
+  12          sbit IRIN=P3^2; //ºìÍâ¶¨Òå
+  13          unsigned char count = 0;
+  14          unsigned char timer1;
+  15          unsigned int Irfet;     //ºìÍâ½ÓÊÕÕýÈ·Âß¼­×´Ì¬,0Îªfalse/1Îªtrue;
+  16          typedef unsigned int u16;         //¶ÔÊý¾ÝÀàÐÍ½øÐÐÉùÃ÷¶¨Òå typedef
+  17          typedef unsigned char u8;
+  18          u8 IrValue[6];
+  19          u8 Time;
+  20          
+  21          
+  22          //////////////////////////////////////////////////////////////////////////
+  23          volatile unsigned char FPM10A_RECEICE_BUFFER[32];        //¶¨Òå½ÓÊÕ»º´æÇø
+  24          code unsigned char FPM10A_Pack_Head[6] = {0xEF,0x01,0xFF,0xFF,0xFF,0xFF};  //Ð­Òé°üÍ·
+  25          code unsigned char FPM10A_Get_Img[6] = {0x01,0x00,0x03,0x01,0x00,0x05};    //»ñµÃÖ¸ÎÆÍ¼Ïñ
+  26          code unsigned char FPM10A_Img_To_Buffer1[7]={0x01,0x00,0x04,0x02,0x01,0x00,0x08}; //½«Í¼Ïñ·ÅÈëµ½BUFFER1
+  27          code unsigned char FPM10A_Search[11]={0x01,0x00,0x08,0x04,0x01,0x00,0x00,0x00,0x64,0x00,0x72}; //ËÑË÷Ö¸ÎÆË
+             -ÑË÷·¶Î§0 - 999,Ê¹ÓÃBUFFER1ÖÐµÄÌØÕ÷ÂëËÑË÷
+  28          //////////////////////////////////////////////////////////////////////////
+  29          
+  30          /************/
+  31          
+  32          /////////////////////////////////////////////
+  33          //                 ¶¨Ê±                    //               
+  34          /////////////////////////////////////////////
+  35          void delay1s(void)   //¶¨Ê±1S,¾§Õñ11.0592MHZ
+  36          {
+  37   1          unsigned char a,b,c;
+  38   1          for(c=13;c>0;c--)
+  39   1              for(b=247;b>0;b--)
+  40   1                  for(a=142;a>0;a--);
+  41   1          _nop_();  //if Keil,require use intrins.h
+  42   1      }
+  43          
+  44          void delay100ms(void)   //¶¨Ê±100MS,¾§Õñ11.0592MHZ
+  45          {
+  46   1          unsigned char a,b;
+  47   1          for(b=221;b>0;b--)
+  48   1              for(a=207;a>0;a--);
+  49   1      }
+  50          
+  51          
+  52          void delay500ms(void)   //500ms
+  53          {
+  54   1          unsigned char a,b,c;
+C51 COMPILER V9.01   MAIN                                                                  04/24/2021 22:29:49 PAGE 2   
+
+  55   1          for(c=98;c>0;c--)
+  56   1              for(b=127;b>0;b--)
+  57   1                  for(a=17;a>0;a--);
+  58   1          _nop_();
+  59   1      }
+  60          
+  61          void delay1_6_f(void)   //Îó²î 0us
+  62          {
+  63   1          unsigned char a,b,c;
+  64   1          for(c=218;c>0;c--)
+  65   1              for(b=131;b>0;b--)
+  66   1                  for(a=23;a>0;a--);
+  67   1          _nop_();  //if Keil,require use intrins.h
+  68   1      }
+  69          
+  70          void delay50ms(void)   //Îó²î 0us
+  71          {
+  72   1          unsigned char a,b;
+  73   1          for(b=173;b>0;b--)
+  74   1              for(a=143;a>0;a--);
+  75   1      }
+  76          
+  77          void delay10ms(void)   //Îó²î 0us
+  78          {
+  79   1          unsigned char a,b,c;
+  80   1          for(c=1;c>0;c--)
+  81   1              for(b=38;b>0;b--)
+  82   1                  for(a=130;a>0;a--);
+  83   1      }
+  84          
+  85          void delay1ms(unsigned int i)
+  86          {
+  87   1         unsigned int k,j;
+  88   1         for(k=0;k<i;k++)
+  89   1            for(j=0;j<121;j++);
+  90   1      }
+  91          
+  92          /********ºìÍâÑÓÊ±**********/
+  93          void delay_Ir(u16 i)    //ºìÍâÑÓÊ±i=1Ô¼10us
+  94          {
+  95   1              while(i--);     
+  96   1      }
+  97          
+  98          ///////////////////////////////////
+  99          //             ¶æ»ú×ª¶¯          //
+ 100          ///////////////////////////////////
+ 101          /*¶¨Ê±Æ÷T0³õÊ¼»¯*/
+ 102          void Timer0_Init()           
+ 103          {
+ 104   1          TMOD &= 0x00;
+ 105   1          TMOD |= 0x01; //¶¨Ê±Æ÷T0ÉèÖÃ³É·½Ê½1
+ 106   1       
+ 107   1          TH0 = 0xff;   //¶¨Ê±³£Êý 0.1ms ¾§ÕñÎª11.0592MHz
+ 108   1          TL0 = 0xa4;
+ 109   1       
+ 110   1          ET0 = 1;      
+ 111   1          TR0 = 1; 
+ 112   1              EA=1; 
+ 113   1      }
+ 114                  
+ 115          /*T0ÖÐ¶Ï³õÊ¼»¯*/
+ 116          void Time0_Init() interrupt 1 
+C51 COMPILER V9.01   MAIN                                                                  04/24/2021 22:29:49 PAGE 3   
+
+ 117          {
+ 118   1              TR0 = 0; 
+ 119   1              TH0 = 0xff; // 0.1ms
+ 120   1              TL0 = 0xa4;
+ 121   1              
+ 122   1              if(count <= timer1) //timer1£º5==0¡ã 15==90¡ã
+ 123   1              { 
+ 124   2                      PWM = 1; 
+ 125   2              }
+ 126   1              else 
+ 127   1              { 
+ 128   2                      PWM = 0; 
+ 129   2              }
+ 130   1              count++;
+ 131   1              if (count >= 200        ) //T = 20msÇåÁã
+ 132   1              { 
+ 133   2                      count = 0; 
+ 134   2              }
+ 135   1              TR0 = 1; //¿ªÆôT0
+ 136   1      }
+ 137          
+ 138          ///////////////////////////////////
+ 139          /*Ö¸ÎÆ³õÊ¼»¯*/
+ 140          void Uart_Init(void) //³õÊ¼»¯
+ 141          {
+ 142   1          SCON=0x50;   //UART·½Ê½1:8Î»UART;   REN=1:ÔÊÐí½ÓÊÕ
+ 143   1          PCON=0x00;   //SMOD=0:²¨ÌØÂÊ²»¼Ó±¶
+ 144   1          TMOD=0x20;   //T1·½Ê½2,ÓÃÓÚUART²¨ÌØÂÊ
+ 145   1          TH1=0xFD;          //UART²¨ÌØÂÊÉèÖÃ:FDFD(9600)
+ 146   1          TL1=0xFD;   //UART²¨ÌØÂÊÉèÖÃ:FDFD(9600)
+ 147   1          TR1=1;         //ÔÊÐíT1¼ÆÊý
+ 148   1          EA=1;         //
+ 149   1      }
+ 150          ///////////////////////////////////
+ 151          
+ 152          /*ºìÍâ³õÊ¼»¯*/
+ 153          void IrInit()
+ 154          {
+ 155   1              IT0=1;  //ÏÂ½µÑØ´¥·¢
+ 156   1              EX0=1;  //´ò¿ªÖÐ¶Ï0ÔÊÐí
+ 157   1              EA=1;   //´ò¿ª×ÜÖÐ¶Ï
+ 158   1              IRIN=1; //³õÊ¼»¯¶Ë¿Ú
+ 159   1      }
+ 160          
+ 161          /*
+ 162          *UART·¢ËÍºÍ½ÓÊÕ²¿·Ö
+ 163          */
+ 164          
+ 165          void Uart_Send_Byte(unsigned char c)//uart·¢ËÍÒ»¸ö×Ö½Ú
+ 166          {
+ 167   1              SBUF = c;
+ 168   1              while(!TI);                //·¢ËÍÍêÎª1
+ 169   1              TI = 0;
+ 170   1      }
+ 171          
+ 172          unsigned char Uart_Receive_Byte()//UART½ÓÊÜÒ»¸ö×Ö½Ú
+ 173          {       
+ 174   1              unsigned char dat;
+ 175   1              while(!RI);         //½ÓÊÕÍêÎª1
+ 176   1              RI = 0;
+ 177   1              dat = SBUF;
+ 178   1              return (dat);
+C51 COMPILER V9.01   MAIN                                                                  04/24/2021 22:29:49 PAGE 4   
+
+ 179   1      }
+ 180          
+ 181          
+ 182          
+ 183          ////////////////////////////////////////////
+ 184          //         AS608/FPM10AÖ¸ÎÆÄ£¿éÃüÁî       //
+ 185          ////////////////////////////////////////////
+ 186          
+ 187          void FPM10A_Cmd_Send_Pack_Head(void)   //·¢ËÍÍ¨Ñ¶Ð­Òé°üÍ·
+ 188          {
+ 189   1              int i;       
+ 190   1              for(i=0;i<6;i++)
+ 191   1         {
+ 192   2                      Uart_Send_Byte(FPM10A_Pack_Head[i]);   
+ 193   2         }               
+ 194   1      }
+ 195          
+ 196          void FPM10A_Receive_Data(unsigned char ucLength) //½ÓÊÕÖ¸ÎÆÄ£¿é·´À¡Êý¾Ý»º³å
+ 197          {
+ 198   1        unsigned char i;
+ 199   1      
+ 200   1        for (i=0;i<ucLength;i++)
+ 201   1           FPM10A_RECEICE_BUFFER[i] = Uart_Receive_Byte();
+ 202   1      
+ 203   1      }
+ 204          
+ 205          void FPM10A_Cmd_Get_Img(void)                ////FINGERPRINT_»ñµÃÖ¸ÎÆÍ¼ÏñÃüÁî(¼ì²âÊÇ·ñÓÐÖ¸ÎÆ)
+ 206          {
+ 207   1          unsigned char i;
+ 208   1          FPM10A_Cmd_Send_Pack_Head(); //·¢ËÍÍ¨ÐÅÐ­Òé°üÍ·
+ 209   1          for(i=0;i<6;i++)
+ 210   1              {
+ 211   2             Uart_Send_Byte(FPM10A_Get_Img[i]);
+ 212   2              }
+ 213   1      }
+ 214          //½²Í¼Ïñ×ª»»³ÉÌØÕ÷Âë´æ·ÅÔÚBuffer1ÖÐ
+ 215          void FINGERPRINT_Cmd_Img_To_Buffer1(void)
+ 216          {
+ 217   1              unsigned char i;
+ 218   1              FPM10A_Cmd_Send_Pack_Head(); //·¢ËÍÍ¨ÐÅÐ­Òé°üÍ·      
+ 219   1                 for(i=0;i<7;i++)   //·¢ËÍÃüÁî ½«Í¼Ïñ×ª»»³É ÌØÕ÷Âë ´æ·ÅÔÚ CHAR_buffer1
+ 220   1           {
+ 221   2                   Uart_Send_Byte(FPM10A_Img_To_Buffer1[i]);                  
+ 222   2                  }
+ 223   1      }
+ 224          
+ 225          //ËÑË÷Ö¸ÎÆ¿âÇ°100Ã¶(¿ÉÒÔ×Ô¼º¸ÄDATAÇøµÄÊý×Ö ×î¸ß999¸ö)
+ 226          void FPM10A_Cmd_Search_Finger(void)
+ 227          {
+ 228   1             unsigned char i;                       
+ 229   1             FPM10A_Cmd_Send_Pack_Head(); //·¢ËÍÍ¨ÐÅÐ­Òé°üÍ·
+ 230   1             for(i=0;i<11;i++)
+ 231   1                 {
+ 232   2                        Uart_Send_Byte(FPM10A_Search[i]);    //½ÓÊÕÖ¸ÎÆÄ£¿é·¢»ØµÄÊý¾Ý
+ 233   2                            }
+ 234   1      }
+ 235          
+ 236          //ËÑË÷ÊÇ·ñÓÐÖ¸ÎÆ,ÈôÓÐÔòÈÏÖ¤
+ 237          void FPM10A_Find_Fingerprint()
+ 238          {
+ 239   1        FPM10A_Cmd_Get_Img();                                         //·¢ËÍ»ñµÃÖ¸ÎÆÍ¼ÏñÃüÁî
+ 240   1        FPM10A_Receive_Data(12);                                  //½ÓÊÕ·´À¡Êý¾Ý»º³å
+C51 COMPILER V9.01   MAIN                                                                  04/24/2021 22:29:49 PAGE 5   
+
+ 241   1        if(FPM10A_RECEICE_BUFFER[9]==0)                 //¸ù¾Ý·´À¡»ØÀ´µÄµÚ9Î»Êý¾ÝÀ´ÅÐ¶ÏÄ£¿éÉÏÓÐÎÞÖ¸ÎÆ£¬ÓÐÔò¼ÌÐøÖ
+             -´ÐÐÎÞÔòÍË³ö
+ 242   1        {
+ 243   2          delay100ms();
+ 244   2          FINGERPRINT_Cmd_Img_To_Buffer1();          //½²Í¼Ïñ×ª»»³ÉÌØÕ÷Âë´æ·ÅÔÚBuffer1ÖÐ
+ 245   2              FPM10A_Receive_Data(12);               
+ 246   2              FPM10A_Cmd_Search_Finger();                                //ËÑË÷È«²¿ÓÃ»§100Ã¶
+ 247   2              FPM10A_Receive_Data(16);
+ 248   2              if(FPM10A_RECEICE_BUFFER[9] == 0) //Èç¹ûËÑË÷µ½ÓÐÏàÓ¦µÄÖ¸ÎÆ  
+ 249   2              {
+ 250   3                chen=0;         //¿ªËøµÆÁÁ
+ 251   3                        timer1=5;      //¶æ»ú×ª¶¯¿ªËø 
+ 252   3                        count=0;      
+ 253   3                delay1ms(2500);//ÑÓ³Ù5s
+ 254   3                        timer1=27;     //¶æ»ú¹éÎ»
+ 255   3                        count=0;
+ 256   3                        chen=1;
+ 257   3              }
+ 258   2              else
+ 259   2              {
+ 260   3                       shi=0;
+ 261   3                       delay1s();
+ 262   3                       shi=1;
+ 263   3               delay100ms(); //ÑÓ³Ù100ms,Ìø³ö
+ 264   3              }
+ 265   2        }
+ 266   1      }
+ 267          
+ 268          
+ 269          /**********¶ÁÈ¡ºìÍâ*********/
+ 270          void ReadIr() interrupt 0
+ 271          {
+ 272   1              u8 j,k;
+ 273   1              u16 err;
+ 274   1              Time=0;
+ 275   1              timer1=27;      //¶æ»ú¹éÎ»
+ 276   1              count=0;                                 
+ 277   1              delay_Ir(700);  //7ms
+ 278   1              if(IRIN==0)             //È·ÈÏÊÇ·ñÕæµÄ½ÓÊÕµ½ÕýÈ·µÄÐÅºÅ
+ 279   1              {        
+ 280   2                      err=1000;                               //1000*10us=10ms,³¬¹ýËµÃ÷½ÓÊÕµ½´íÎóµÄÐÅºÅ
+ 281   2                      /*µ±Á½¸öÌõ¼þ¶¼ÎªÕæÊÇÑ­»·£¬Èç¹ûÓÐÒ»¸öÌõ¼þÎª¼ÙµÄÊ±ºòÌø³öÑ­»·£¬ÃâµÃ³ÌÐò³ö´íµÄÊ±
+ 282   2                      ºî£¬³ÌÐòËÀÔÚÕâÀï*/      
+ 283   2                      while((IRIN==0)&&(err>0))       //µÈ´ýÇ°Ãæ9msµÄµÍµçÆ½¹ýÈ¥               
+ 284   2                      {                       
+ 285   3                              delay_Ir(1);
+ 286   3                              err--;
+ 287   3                      } 
+ 288   2                      if(IRIN==1)                     //Èç¹ûÕýÈ·µÈµ½9msµÍµçÆ½
+ 289   2                      {
+ 290   3                              err=500;
+ 291   3                              while((IRIN==1)&&(err>0))                //µÈ´ý4.5msµÄÆðÊ¼¸ßµçÆ½¹ýÈ¥
+ 292   3                              {
+ 293   4                                      delay_Ir(1);
+ 294   4                                      err--;
+ 295   4                              }
+ 296   3                              for(k=0;k<4;k++)                //¹²ÓÐ4×éÊý¾Ý
+ 297   3                              {                               
+ 298   4                                      for(j=0;j<8;j++)        //½ÓÊÕÒ»×éÊý¾Ý
+ 299   4                                      {
+ 300   5                                              err=60;         
+ 301   5                                              while((IRIN==0)&&(err>0))//µÈ´ýÐÅºÅÇ°ÃæµÄ560usµÍµçÆ½¹ýÈ¥
+C51 COMPILER V9.01   MAIN                                                                  04/24/2021 22:29:49 PAGE 6   
+
+ 302   5                                              {
+ 303   6                                                      delay_Ir(1);
+ 304   6                                                      err--;
+ 305   6                                              }
+ 306   5                                              err=500;
+ 307   5                                              while((IRIN==1)&&(err>0))        //¼ÆËã¸ßµçÆ½µÄÊ±¼ä³¤¶È¡£
+ 308   5                                              {
+ 309   6                                                      delay_Ir(10);    //0.1ms
+ 310   6                                                      Time++;
+ 311   6                                                      err--;
+ 312   6                                                      if(Time>30)
+ 313   6                                                      {
+ 314   7                                                              return;
+ 315   7                                                      }
+ 316   6                                              }
+ 317   5                                              IrValue[k]>>=1;  //k±íÊ¾µÚ¼¸×éÊý¾Ý
+ 318   5                                              if(Time>=8)                     //Èç¹û¸ßµçÆ½³öÏÖ´óÓÚ565us£¬ÄÇÃ´ÊÇ1
+ 319   5                                              {
+ 320   6                                                      IrValue[k]|=0x80;
+ 321   6                                              }
+ 322   5                                              Time=0;         //ÓÃÍêÊ±¼äÒªÖØÐÂ¸³Öµ                                                    
+ 323   5                                      }
+ 324   4                              }
+ 325   3                      }
+ 326   2                      //·´ÂëÈ¡·´ºóÓëÔ­ÂëÏàÍ¬ÔòËµÃ÷ÐÅºÅ½ÓÊÜÕýÈ·
+ 327   2                      if(IrValue[2]!=~IrValue[3])
+ 328   2                      {       
+ 329   3                              return;
+ 330   3                      }
+ 331   2                      else{
+ 332   3                              Irfet = 1;      //ºìÍâ×´Ì¬ 1 ÎªÕæ
+ 333   3                              Irfet_led = 0;  //ºìÍâ×´Ì¬µÆµÆ¿ª
+ 334   3                              delay500ms();
+ 335   3                              //¶æ»ú¹éÎ»
+ 336   3                              timer1=27;              
+ 337   3                              count=0;
+ 338   3                      }
+ 339   2              }                       
+ 340   1      }
+ 341          
+ 342          
+ 343          
+ 344          //////////////////////////////////////////////
+ 345          //               Ö÷³ÌÐò                     //
+ 346          //////////////////////////////////////////////
+ 347          void main()         
+ 348          {
+ 349   1      delay500ms();//µ¥Æ¬»úÉÏµç,µÈ´ý1sÎÈ¶¨
+ 350   1      Uart_Init();   //³õÊ¼»¯´®¿Ú
+ 351   1      Timer0_Init(); //¶æ»ú³õÊ¼»¯
+ 352   1      IrInit();       //ºìÍâ³õÊ¼»¯
+ 353   1      Irfet_led=1;    //ºìÍâµÆ
+ 354   1      led=1;
+ 355   1      chen=1;
+ 356   1      shi=1;
+ 357   1      GND=1;
+ 358   1      timer1=27;      //¶æ»ú¹éÎ»
+ 359   1      count=0;
+ 360   1      PWM=1;
+ 361   1      pressed=0;
+ 362   1      Irfet=0;        //ºìÍâ½ÓÊÕ×´Ì¬ÖÃ0
+ 363   1      led=0;           //¹¤×÷Ö¸Ê¾µÆÁÁ,ÌáÐÑÏµÍ³ÒÑ¾­Íê³É³õÊ¼»¯  (²âÊÔÎª0)
+C51 COMPILER V9.01   MAIN                                                                  04/24/2021 22:29:49 PAGE 7   
+
+ 364   1      
+ 365   1              while(1)
+ 366   1              {
+ 367   2                      if(pressed==1)         //Ö¸ÎÆÄ£¿éÊÇ±»°´ÏÂ? °´ÏÂÎª1 ·ñÔòÎª0
+ 368   2                      {
+ 369   3                              Uart_Init();    //Ö¸ÎÆ³õÊ¼»¯´®¿Ú        
+ 370   3                                              timer1=27;              //¶æ»ú¹éÎ»
+ 371   3                                              count=0;
+ 372   3                              delay500ms();//ÑÓ³Ù0.5s//µÈ´ýSOC³õÊ¼»¯Íê³É
+ 373   3                              Uart_Init();    //Ö¸ÎÆ³õÊ¼»¯´®¿Ú
+ 374   3                                              timer1=27;
+ 375   3                                              count=0;
+ 376   3                              FPM10A_Find_Fingerprint(); //²éÕÒ,¶Ô±ÈÖ¸ÎÆ
+ 377   3                      }
+ 378   2      
+ 379   2                                      else if(Irfet==1){
+ 380   3                                              Irfet=0;                //ºìÍâÐÅºÅÖØÖÃ
+ 381   3                                              chen=0;         //¿ªËøµÆÁÁ
+ 382   3                                              timer1=5;      //¶æ»ú×ª¶¯¿ªËø 
+ 383   3                                              count=0;        
+ 384   3                                          delay1ms(2500);//ÑÓ³Ù5s
+ 385   3                                              timer1=27;         //¶æ»ú¹éÎ»
+ 386   3                                              count=0;
+ 387   3                                              chen=1;
+ 388   3                                              Irfet_led = 1;  //ºìÍâµÆÃð
+ 389   3                                              }
+ 390   2                                      else{
+ 391   3                              delay100ms();         //Ö¸ÎÆÄ£¿éÃ»±»°´ÏÂ ÑÓ³Ù100ms               
+ 392   3                                              }
+ 393   2                              }
+ 394   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    765    ----
+   CONSTANT SIZE    =     30    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     43       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
